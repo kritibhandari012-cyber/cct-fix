@@ -1,1573 +1,963 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCT fix - Campus Issue & Sports Equipment Reporting System</title>
+    <title>CCT fix - College Issue & Sports Inventory Portal</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
                         brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        },
-                        sports: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            500: '#f97316',
-                            600: '#ea580c',
-                            700: '#c2410c',
-                            800: '#9a3412',
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
                         }
                     }
                 }
             }
         }
     </script>
-    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        .modal-backdrop {
-            background-color: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(4px);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.625rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            line-height: 1;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        .toast-animate {
-            animation: slideInRight 0.3s ease-out forwards;
-        }
-        .toast-exit {
-            animation: fadeOut 0.3s ease-in forwards;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 3px; }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-200">
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
-
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-800/90 backdrop-blur border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <!-- Brand Logo & Title -->
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchNavTab('dashboard')">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-brand-500/20">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo & Brand Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
                         <i class="fa-solid fa-wrench"></i>
                     </div>
                     <div>
-                        <span class="text-xl font-extrabold bg-gradient-to-r from-brand-700 to-indigo-600 bg-clip-text text-transparent">CCT fix</span>
-                        <span class="hidden sm:inline-block text-xs text-slate-500 font-medium ml-2 border-l border-slate-200 pl-2">Issue & Sports Equipment System</span>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">CCT <span class="text-sky-600 dark:text-sky-400">fix</span></h1>
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Live Cloud Sync
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Campus Infrastructure & Sports Equipment Portal</p>
                     </div>
                 </div>
 
-                <!-- Main Desktop Navigation Links -->
-                <nav class="hidden lg:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
-                    <button id="navDashboard" onclick="switchNavTab('dashboard')" class="px-3.5 py-1.5 rounded-lg transition duration-150 bg-white text-brand-700 shadow-xs">
-                        <i class="fa-solid fa-chart-pie mr-1.5"></i>Dashboard Overview
-                    </button>
-                    <button id="navGeneral" onclick="switchNavTab('general')" class="px-3.5 py-1.5 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900">
-                        <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Campus Issues
-                    </button>
-                    <button id="navSports" onclick="switchNavTab('sports')" class="px-3.5 py-1.5 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900">
-                        <i class="fa-solid fa-volleyball mr-1.5 text-sports-600"></i>Sports Inventory & Gear
-                    </button>
-                </nav>
-
-                <!-- Header Quick Actions -->
-                <div class="flex items-center space-x-2">
-                    <button onclick="openNewReportModal()" class="inline-flex items-center space-x-1.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow-sm transition duration-150 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                        <span>Report Issue</span>
-                    </button>
-
-                    <button onclick="openMissingItemModal()" class="inline-flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm px-3 py-2 rounded-lg shadow-sm transition duration-150 cursor-pointer">
-                        <i class="fa-solid fa-flag text-xs"></i>
-                        <span class="hidden sm:inline">Report Gear Issue</span>
-                        <span class="sm:hidden">Gear Issue</span>
+                <!-- Right Side Actions & Sync Status -->
+                <div class="flex items-center space-x-3">
+                    <button id="themeToggleBtn" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
                     </button>
                     
-                    <div class="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
-
-                    <div class="flex items-center space-x-2 text-xs text-slate-600">
-                        <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold border border-brand-200">
-                            CCT
-                        </div>
-                    </div>
+                    <button id="openReportModalBtn" class="bg-sky-600 hover:bg-sky-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-sm transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>New Report / Request</span>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Mobile Sub-Navigation Bar -->
-            <div class="flex lg:hidden border-t border-slate-100 py-2 justify-around">
-                <button id="mobNavDashboard" onclick="switchNavTab('dashboard')" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-brand-700 border border-slate-200">
-                    Dashboard
-                </button>
-                <button id="mobNavGeneral" onclick="switchNavTab('general')" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 bg-slate-100">
-                    Campus Issues
-                </button>
-                <button id="mobNavSports" onclick="switchNavTab('sports')" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 bg-slate-100">
-                    Sports Gear
-                </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- Public Shared Cloud Banner -->
+    <div class="bg-gradient-to-r from-sky-900 via-indigo-900 to-slate-900 text-white text-xs sm:text-sm py-2.5 px-4 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-globe text-sky-400 text-base animate-pulse"></i>
+                <span><strong>Public Live Directory:</strong> All maintenance reports and sports gear requests are broadcast in real-time to all campus members.</span>
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-sky-200 bg-sky-950/50 px-3 py-1 rounded-full border border-sky-800">
+                <i class="fa-solid fa-signal text-emerald-400"></i>
+                <span id="syncStatusText">Connected to Cloud Database</span>
+            </div>
+        </div>
+    </div>
 
-        <!-- =================================================================== -->
-        <!-- VIEW 1: OVERVIEW DASHBOARD                                         -->
-        <!-- =================================================================== -->
-        <div id="viewDashboard" class="space-y-6">
-            <!-- Hero Banner & Quick Actions -->
-            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div class="space-y-2">
-                    <span class="inline-block px-3 py-1 bg-white/10 text-white text-xs font-semibold rounded-full backdrop-blur-md">
-                        <i class="fa-solid fa-university mr-1"></i> CCT fix - Central Reporting Portal
-                    </span>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">CCT Campus Issue & Sports Equipment System</h1>
-                    <p class="text-slate-300 text-xs sm:text-sm max-w-xl">
-                        Log facilities and technical issues, track sports gear status (Available, Damaged, Missing, Replacement Needed), and request equipment procurement seamlessly.
-                    </p>
-                </div>
-                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
-                    <button onclick="openMissingItemModal()" class="flex-1 sm:flex-none px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <span>Flag Sports Gear Issue</span>
-                    </button>
-                    <button onclick="openProcurementModal()" class="flex-1 sm:flex-none px-4 py-2.5 bg-sports-600 hover:bg-sports-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-cart-plus"></i>
-                        <span>Request New Gear</span>
-                    </button>
-                </div>
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 gap-8 overflow-x-auto">
+            <button id="tabAll" class="tab-btn active border-b-2 border-sky-600 text-sky-600 dark:text-sky-400 font-semibold py-3 px-1 text-sm flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>All Public Reports</span>
+                <span id="badgeCountAll" class="bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button id="tabSports" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium py-3 px-1 text-sm flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-football"></i>
+                <span>Sports Equipment Tracker</span>
+                <span id="badgeCountSports" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button id="tabGeneral" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium py-3 px-1 text-sm flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-building"></i>
+                <span>General Campus Issues</span>
+                <span id="badgeCountGeneral" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">Total Reports</div>
+                <div class="text-2xl font-bold mt-1 text-slate-900 dark:text-white" id="statTotal">0</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="text-xs text-amber-600 dark:text-amber-400 font-medium uppercase tracking-wider">Pending / Open</div>
+                <div class="text-2xl font-bold mt-1 text-amber-600 dark:text-amber-400" id="statPending">0</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="text-xs text-blue-600 dark:text-blue-400 font-medium uppercase tracking-wider">In Progress</div>
+                <div class="text-2xl font-bold mt-1 text-blue-600 dark:text-blue-400" id="statInProgress">0</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-medium uppercase tracking-wider">Resolved / Replaced</div>
+                <div class="text-2xl font-bold mt-1 text-emerald-600 dark:text-emerald-400" id="statResolved">0</div>
+            </div>
+            <div class="col-span-2 md:col-span-1 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="text-xs text-rose-600 dark:text-rose-400 font-medium uppercase tracking-wider">Missing/Damaged Gear</div>
+                <div class="text-2xl font-bold mt-1 text-rose-600 dark:text-rose-400" id="statSportsMissing">0</div>
+            </div>
+        </div>
+
+        <!-- Search and Filters Bar -->
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- Search input -->
+            <div class="relative w-full md:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search title, venue, reporter..." class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
             </div>
 
-            <!-- Stats Overview Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Campus Issues</p>
-                        <p id="dashTotalIssues" class="text-2xl font-extrabold text-slate-800 mt-0.5">0</p>
-                        <p class="text-[11px] text-amber-600 mt-0.5 font-medium" id="dashPendingCount">0 pending review</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                    </div>
-                </div>
+            <!-- Filter Dropdowns -->
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <select id="statusFilter" class="px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <option value="ALL">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved / Replaced">Resolved / Replaced</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
 
-                <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sports Equipment Total</p>
-                        <p id="dashSportsTotal" class="text-2xl font-extrabold text-slate-800 mt-0.5">0</p>
-                        <p class="text-[11px] text-slate-500 mt-0.5" id="dashSportsAvailCount">0 Available</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-sports-50 text-sports-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-basketball"></i>
-                    </div>
-                </div>
+                <select id="priorityFilter" class="px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <option value="ALL">All Priorities</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
 
-                <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Missing / Damaged Gear</p>
-                        <p id="dashSportsMissing" class="text-2xl font-extrabold text-rose-600 mt-0.5">0</p>
-                        <p class="text-[11px] text-rose-500 mt-0.5 font-medium">Action Required</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Procurement Requests</p>
-                        <p id="dashSportsProcurement" class="text-2xl font-extrabold text-purple-600 mt-0.5">0</p>
-                        <p class="text-[11px] text-purple-500 mt-0.5 font-medium" id="dashProcurementPending">0 Pending</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-cart-flatbed"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Content Split View -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Recent Reports Feed -->
-                <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center">
-                            <i class="fa-solid fa-clock-rotate-left mr-2 text-brand-600"></i>Recent Campus Reports
-                        </h2>
-                        <button onclick="switchNavTab('general')" class="text-xs font-semibold text-brand-600 hover:text-brand-800">
-                            View All <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                    <div id="dashRecentIssues" class="divide-y divide-slate-100"></div>
-                </div>
-
-                <!-- Quick Sports Gear Health Summary -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center">
-                            <i class="fa-solid fa-chart-bar mr-2 text-sports-600"></i>Sports Gear Health
-                        </h2>
-                        <button onclick="switchNavTab('sports')" class="text-xs font-semibold text-sports-600 hover:text-sports-800">
-                            Manage Gear <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-
-                    <div id="sportsHealthList" class="space-y-4 text-xs"></div>
-
-                    <div class="bg-sports-50 border border-sports-100 rounded-xl p-3.5 flex items-start space-x-3 mt-4">
-                        <i class="fa-solid fa-circle-info text-sports-600 text-base mt-0.5"></i>
-                        <p class="text-xs text-sports-900 leading-relaxed">
-                            <span class="font-bold">CCT Sports Notice:</span> All sports gear issued for ground practice must be signed back in before 6:00 PM. Report damaged items immediately through CCT fix.
-                        </p>
-                    </div>
+                <!-- Toggle Layout View -->
+                <div class="flex border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden ml-auto">
+                    <button id="viewGridBtn" class="p-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm"><i class="fa-solid fa-grip"></i></button>
+                    <button id="viewTableBtn" class="p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-sm"><i class="fa-solid fa-list"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- =================================================================== -->
-        <!-- VIEW 2: GENERAL CAMPUS ISSUES MANAGEMENT                            -->
-        <!-- =================================================================== -->
-        <div id="viewGeneral" class="hidden space-y-6">
-            <!-- Search & Filter Controls -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-4">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search CCT issues by title, reporter, location, or ID..." 
-                            class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
-                    </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                        <select id="filterStatus" onchange="applyFilters()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="ALL">All Statuses</option>
-                            <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Resolved">Resolved</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
-
-                        <select id="filterCategory" onchange="applyFilters()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="ALL">All Categories</option>
-                            <option value="Sports Facilities">Sports Facilities</option>
-                            <option value="Facilities">Facilities</option>
-                            <option value="IT/WiFi">IT/WiFi</option>
-                            <option value="Electrical">Electrical</option>
-                            <option value="Plumbing">Plumbing</option>
-                            <option value="Library">Library</option>
-                            <option value="Hostel">Hostel</option>
-                            <option value="General">General</option>
-                        </select>
-
-                        <select id="filterPriority" onchange="applyFilters()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 col-span-2 sm:col-span-1">
-                            <option value="ALL">All Priorities</option>
-                            <option value="Low">Low Priority</option>
-                            <option value="Medium">Medium Priority</option>
-                            <option value="High">High Priority</option>
-                            <option value="Urgent">Urgent</option>
-                        </select>
-                    </div>
-
-                    <div class="flex items-center space-x-1 border border-slate-200 bg-slate-50 p-1 rounded-lg self-end lg:self-auto">
-                        <button id="viewTableBtn" onclick="switchView('table')" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 bg-white shadow-xs">
-                            <i class="fa-solid fa-list mr-1"></i> Table
-                        </button>
-                        <button id="viewGridBtn" onclick="switchView('grid')" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800">
-                            <i class="fa-solid fa-border-all mr-1"></i> Grid
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Issues Display Section -->
-            <section id="reportsDisplaySection">
-                <div id="tableView" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    <th class="py-3.5 px-4">ID</th>
-                                    <th class="py-3.5 px-4">Issue Details</th>
-                                    <th class="py-3.5 px-4">Category</th>
-                                    <th class="py-3.5 px-4">Reporter</th>
-                                    <th class="py-3.5 px-4">Priority</th>
-                                    <th class="py-3.5 px-4">Status</th>
-                                    <th class="py-3.5 px-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="reportsTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="gridView" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-
-                <div id="emptyState" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center">
-                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 text-2xl">
-                        <i class="fa-solid fa-folder-open"></i>
-                    </div>
-                    <h3 class="text-base font-semibold text-slate-800">No CCT issues found</h3>
-                    <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Try adjusting your search filters or submit a new report.</p>
-                    <button onclick="resetFilters()" class="mt-4 text-xs font-semibold text-brand-600 hover:text-brand-700 underline">Reset filters</button>
-                </div>
-            </section>
+        <!-- Live Public Reports Grid Container -->
+        <div id="reportsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be injected dynamically -->
         </div>
 
-        <!-- =================================================================== -->
-        <!-- VIEW 3: SPORTS EQUIPMENT INVENTORY & REQUESTS MODULE                -->
-        <!-- =================================================================== -->
-        <div id="viewSports" class="hidden space-y-6">
-            <!-- Action Toolbar & Sub-tabs Switcher -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <!-- Sub Tabs -->
-                    <div class="flex items-center space-x-1 border border-slate-200 bg-slate-100 p-1 rounded-lg">
-                        <button id="sportsSubTabInventory" onclick="switchSportsSubTab('inventory')" class="px-3.5 py-1.5 text-xs font-bold rounded-md bg-white text-sports-700 shadow-xs">
-                            <i class="fa-solid fa-boxes-stacked mr-1.5"></i>Equipment Inventory
-                        </button>
-                        <button id="sportsSubTabRequests" onclick="switchSportsSubTab('requests')" class="px-3.5 py-1.5 text-xs font-bold rounded-md text-slate-600 hover:text-slate-900">
-                            <i class="fa-solid fa-cart-flatbed mr-1.5"></i>Procurement Requests
-                        </button>
-                    </div>
+        <!-- Live Public Reports Table Container (Hidden by Default) -->
+        <div id="reportsTableWrapper" class="hidden bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+            <table class="w-full text-sm text-left text-slate-600 dark:text-slate-300">
+                <thead class="text-xs uppercase bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                    <tr>
+                        <th class="px-4 py-3">Category / Title</th>
+                        <th class="px-4 py-3">Location / Venue</th>
+                        <th class="px-4 py-3">Reporter</th>
+                        <th class="px-4 py-3">Priority</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Date</th>
+                        <th class="px-4 py-3 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700">
+                    <!-- Table rows dynamically populated -->
+                </tbody>
+            </table>
+        </div>
 
-                    <!-- Search & Condition Filters -->
-                    <div class="flex flex-wrap items-center gap-2 flex-1 md:justify-end">
-                        <div class="relative flex-1 max-w-xs">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <input type="text" id="sportsSearchInput" oninput="renderSportsInventory()" placeholder="Search CCT sports gear..." 
-                                class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500">
-                        </div>
-
-                        <select id="sportsFilterSport" onchange="renderSportsInventory()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sports-500">
-                            <option value="ALL">All Sports</option>
-                            <option value="Cricket">Cricket</option>
-                            <option value="Football">Football</option>
-                            <option value="Basketball">Basketball</option>
-                            <option value="Badminton">Badminton</option>
-                            <option value="Gym">Gym</option>
-                            <option value="Volleyball">Volleyball</option>
-                            <option value="Table Tennis">Table Tennis</option>
-                        </select>
-
-                        <select id="sportsFilterStatus" onchange="renderSportsInventory()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sports-500">
-                            <option value="ALL">All Conditions</option>
-                            <option value="Available">Available</option>
-                            <option value="Damaged">Damaged</option>
-                            <option value="Missing">Missing</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Replacement Needed">Replacement Needed</option>
-                        </select>
-
-                        <button onclick="openProcurementModal()" class="text-xs font-bold bg-sports-600 hover:bg-sports-700 text-white px-3 py-1.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-plus mr-1"></i>New Request
-                        </button>
-                    </div>
-                </div>
+        <!-- Empty State Message -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 my-4">
+            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mx-auto mb-3 text-slate-400 text-2xl">
+                <i class="fa-solid fa-clipboard-list"></i>
             </div>
-
-            <!-- SUB-VIEW 1: SPORTS INVENTORY LIST -->
-            <section id="sportsInventoryContainer" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="py-3.5 px-4">Equipment Name & ID</th>
-                                <th class="py-3.5 px-4">Sport Category</th>
-                                <th class="py-3.5 px-4">Location / Ground / Gym</th>
-                                <th class="py-3.5 px-4">Quantity (Avail / Total)</th>
-                                <th class="py-3.5 px-4">Status</th>
-                                <th class="py-3.5 px-4">Last Checked</th>
-                                <th class="py-3.5 px-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sportsInventoryTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SUB-VIEW 2: PROCUREMENT REQUESTS PIPELINE TABLE -->
-            <section id="sportsRequestsContainer" class="hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="py-3.5 px-4">Req ID</th>
-                                <th class="py-3.5 px-4">Equipment Details</th>
-                                <th class="py-3.5 px-4">Qty / Urgency</th>
-                                <th class="py-3.5 px-4">Requested By</th>
-                                <th class="py-3.5 px-4">Pipeline Status</th>
-                                <th class="py-3.5 px-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sportsRequestsTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-                    </table>
-                </div>
-            </section>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">No Reports Found</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">There are no reports matching your active filter criteria or no submissions yet.</p>
+            <button id="emptyNewBtn" class="mt-4 bg-sky-600 hover:bg-sky-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition">
+                Submit First Request
+            </button>
         </div>
 
     </main>
 
-    <!-- =================================================================== -->
-    <!-- MODALS SECTION                                                      -->
-    <!-- =================================================================== -->
-
-    <!-- Modal 1: General Issue Detail View Modal -->
-    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <div class="flex items-center space-x-2">
-                    <span id="detailId" class="text-xs font-mono font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded">#0000</span>
-                    <span id="detailBadgeCategory" class="badge bg-blue-100 text-blue-700">Category</span>
-                </div>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <div class="p-6 overflow-y-auto space-y-5">
-                <div>
-                    <h2 id="detailTitle" class="text-xl font-bold text-slate-900">Issue Title Here</h2>
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
-                        <span><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i><span id="detailLocation">Location</span></span>
-                        <span><i class="fa-solid fa-calendar mr-1 text-slate-400"></i><span id="detailDate">Date</span></span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Reporter</span>
-                        <span id="detailReporter" class="text-xs font-semibold text-slate-700">Name</span>
-                        <span id="detailRole" class="text-[10px] text-slate-500 block">Role</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Priority</span>
-                        <span id="detailPriority" class="text-xs font-semibold">Priority</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status</span>
-                        <span id="detailStatus" class="text-xs font-semibold">Status</span>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Description</h4>
-                    <p id="detailDescription" class="text-xs text-slate-700 whitespace-pre-line leading-relaxed bg-slate-50/50 p-3 rounded-lg border border-slate-100">
-                        Description text...
-                    </p>
-                </div>
-
-                <div id="detailAttachmentContainer" class="hidden space-y-1.5">
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Attachment Preview</h4>
-                    <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-900 max-h-64 flex items-center justify-center">
-                        <img id="detailImage" src="" alt="Attachment Preview" class="object-contain w-full h-full max-h-64">
-                    </div>
-                </div>
-            </div>
-
-            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="flex items-center space-x-2 w-full sm:w-auto">
-                    <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">Update Status:</span>
-                    <select id="updateStatusSelect" onchange="updateStatus(this.value)" class="text-xs font-semibold bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <option value="Pending">Pending</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                </div>
-                <button onclick="closeDetailModal()" class="w-full sm:w-auto text-xs font-semibold bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg transition">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 2: Submit New General Issue -->
-    <div id="newReportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-triangle-exclamation text-brand-600 mr-2"></i>Report CCT Issue</h3>
-                <button onclick="closeNewReportModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <form id="issueForm" onsubmit="handleFormSubmit(event)" class="p-6 overflow-y-auto space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Issue Title *</label>
-                    <input type="text" id="formTitle" required placeholder="e.g. WiFi Access Point Down in CCT Block A" 
-                        class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
-                        <select id="formCategory" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-                            <option value="Facilities">Facilities</option>
-                            <option value="Sports Facilities">Sports Facilities</option>
-                            <option value="IT/WiFi">IT/WiFi</option>
-                            <option value="Electrical">Electrical</option>
-                            <option value="Plumbing">Plumbing</option>
-                            <option value="Library">Library</option>
-                            <option value="Hostel">Hostel</option>
-                            <option value="General">General</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Priority *</label>
-                        <select id="formPriority" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-                            <option value="Low">Low Priority</option>
-                            <option value="Medium" selected>Medium Priority</option>
-                            <option value="High">High Priority</option>
-                            <option value="Urgent">Urgent</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Location / Ground / Room *</label>
-                        <input type="text" id="formLocation" required placeholder="e.g. CCT Computer Lab 1" 
-                            class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Your Name *</label>
-                        <input type="text" id="formReporter" required placeholder="e.g. Alex Smith" 
-                            class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Role / Affiliation *</label>
-                    <select id="formRole" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-                        <option value="Student">Student</option>
-                        <option value="Faculty">Faculty</option>
-                        <option value="Sports Coach">Sports Coach</option>
-                        <option value="Staff">Staff</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Description *</label>
-                    <textarea id="formDescription" required rows="3" placeholder="Provide full details regarding the maintenance or technical issue..." 
-                        class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Attach Photo (Optional)</label>
-                    <input type="file" id="formImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer">
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeNewReportModal()" class="text-xs font-semibold text-slate-600 hover:text-slate-800 px-4 py-2 rounded-lg transition">Cancel</button>
-                    <button type="submit" class="text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg shadow-sm transition">Submit Report</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 3: Report Missing / Damaged Sports Equipment -->
-    <div id="missingItemModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-rose-50/80">
-                <h3 class="text-base font-bold text-rose-800"><i class="fa-solid fa-flag text-rose-600 mr-2"></i>Report Damaged / Missing Sports Equipment</h3>
-                <button onclick="closeMissingItemModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <form id="missingItemForm" onsubmit="handleMissingItemSubmit(event)" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Select Equipment Item *</label>
-                    <select id="missingEquipmentSelect" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                        <option value="">Choose item from inventory...</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Issue Type / Status *</label>
-                        <select id="missingType" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                            <option value="Damaged">Damaged / Torn / Broken</option>
-                            <option value="Missing">Missing / Unreturned</option>
-                            <option value="Maintenance">Maintenance Required</option>
-                            <option value="Replacement Needed">Replacement Needed</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Quantity Affected *</label>
-                        <input type="number" id="missingQty" min="1" value="1" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Location / Ground / Gym *</label>
-                        <input type="text" id="missingLocation" required placeholder="e.g. CCT Sports Ground / Gym Locker" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Your Name *</label>
-                        <input type="text" id="missingReporter" required placeholder="e.g. Coach David" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Urgency Level *</label>
-                        <select id="missingUrgency" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                            <option value="Medium">Medium (Regular Practice)</option>
-                            <option value="High">High (Upcoming Tournament)</option>
-                            <option value="Urgent">Urgent (Immediate Need)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Recommended Action *</label>
-                        <select id="missingAction" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
-                            <option value="Repair">Send for Repair</option>
-                            <option value="Replace">Full Replacement Needed</option>
-                            <option value="Investigate">Investigate Loss</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Description / Notes *</label>
-                    <textarea id="missingNotes" required rows="3" placeholder="Explain the condition, damage nature, or when it was noticed..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"></textarea>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeMissingItemModal()" class="text-xs font-semibold text-slate-600 px-4 py-2 rounded-lg">Cancel</button>
-                    <button type="submit" class="text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg shadow-sm">Log Issue & Update Status</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 4: Request New Sports Equipment / Procurement -->
-    <div id="procurementModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-sports-50">
-                <h3 class="text-base font-bold text-sports-800"><i class="fa-solid fa-cart-plus text-sports-600 mr-2"></i>Request New Sports Equipment for CCT</h3>
-                <button onclick="closeProcurementModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <form id="procurementForm" onsubmit="handleProcurementSubmit(event)" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Equipment Name *</label>
-                    <input type="text" id="reqItemName" required placeholder="e.g. Yonex Feather Shuttlecocks (Pack of 10)" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
-                        <select id="reqSportCategory" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500 bg-white">
-                            <option value="Cricket">Cricket</option>
-                            <option value="Football">Football</option>
-                            <option value="Basketball">Basketball</option>
-                            <option value="Badminton">Badminton</option>
-                            <option value="Gym">Gym</option>
-                            <option value="Volleyball">Volleyball</option>
-                            <option value="Table Tennis">Table Tennis</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Quantity Needed *</label>
-                        <input type="number" id="reqQuantity" min="1" value="1" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Urgency / Priority *</label>
-                        <select id="reqPriority" required class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500 bg-white">
-                            <option value="Low">Low Priority</option>
-                            <option value="Medium" selected>Medium Priority</option>
-                            <option value="High">High Priority</option>
-                            <option value="Urgent">Urgent</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Requested By *</label>
-                        <input type="text" id="reqRequestedBy" required placeholder="Name & Role/Team" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Description / Justification *</label>
-                    <textarea id="reqReason" required rows="3" placeholder="Explain why new sports items are needed for CCT..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sports-500"></textarea>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeProcurementModal()" class="text-xs font-semibold text-slate-600 px-4 py-2 rounded-lg">Cancel</button>
-                    <button type="submit" class="text-xs font-bold bg-sports-600 hover:bg-sports-700 text-white px-5 py-2.5 rounded-lg shadow-sm">Submit Equipment Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- =================================================================== -->
-    <!-- JAVASCRIPT LOGIC & STATE PERSISTENCE                                -->
-    <!-- =================================================================== -->
-    <script>
-        // CCT fix Default Seed Data
-        const defaultReports = [
-            {
-                id: "ISS-1001",
-                title: "Badminton Court Net Torn & Tension Pole Loose",
-                category: "Sports Facilities",
-                reporter: "Coach Marcus",
-                role: "Sports Coach",
-                location: "CCT Indoor Court 1",
-                priority: "High",
-                status: "Pending",
-                date: "2026-09-29",
-                description: "The main badminton net has snapped strings and the left tension pole is wobbling dangerously.",
-                image: null
-            },
-            {
-                id: "ISS-1002",
-                title: "Water leakage near CCT Main Library entrance",
-                category: "Plumbing",
-                reporter: "Sarah Jenkins",
-                role: "Student",
-                location: "CCT Central Library 1st Floor",
-                priority: "High",
-                status: "In Progress",
-                date: "2026-09-29",
-                description: "Dispensary pipe leak causing puddle on floor.",
-                image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80"
-            },
-            {
-                id: "ISS-1003",
-                title: "3 Cricket Helmets Missing from Sports Room B",
-                category: "Sports Facilities",
-                reporter: "Coach Ray",
-                role: "Sports Coach",
-                location: "CCT Pavilion Room 3",
-                priority: "High",
-                status: "Pending",
-                date: "2026-09-28",
-                description: "FLAGGED MISSING SPORTS MATERIAL: Unreturned after inter-departmental match practice.",
-                image: null
-            },
-            {
-                id: "ISS-1004",
-                title: "Projector flickering in CCT Computer Lab 2",
-                category: "IT/WiFi",
-                reporter: "Prof. Alan Vance",
-                role: "Faculty",
-                location: "CCT Academic Block B",
-                priority: "Medium",
-                status: "Pending",
-                date: "2026-09-30",
-                description: "Projector screen color keeps turning green randomly during lectures.",
-                image: null
-            }
-        ];
-
-        const defaultSportsInventory = [
-            {
-                id: "SP-201",
-                name: "Spalding Pro Leather Basketball",
-                sport: "Basketball",
-                location: "CCT Sports Gym Storage A1",
-                totalQty: 12,
-                availableQty: 10,
-                status: "Available",
-                lastChecked: "2026-09-28"
-            },
-            {
-                id: "SP-202",
-                name: "Mikasa Competition Volleyball",
-                sport: "Volleyball",
-                location: "CCT Indoor Arena Locker B",
-                totalQty: 8,
-                availableQty: 2,
-                status: "Maintenance",
-                lastChecked: "2026-09-30"
-            },
-            {
-                id: "SP-203",
-                name: "SG Tournament Cricket Kit Bag & Helmets",
-                sport: "Cricket",
-                location: "CCT Ground Pavilion Room 3",
-                totalQty: 5,
-                availableQty: 2,
-                status: "Missing",
-                lastChecked: "2026-09-25"
-            },
-            {
-                id: "SP-204",
-                name: "Yonex Nanoflare Rackets (Pair)",
-                sport: "Badminton",
-                location: "CCT Sports Office Rack B4",
-                totalQty: 15,
-                availableQty: 14,
-                status: "Available",
-                lastChecked: "2026-09-29"
-            },
-            {
-                id: "SP-205",
-                name: "Cast Iron Gym Dumbbell Set (20kg)",
-                sport: "Gym",
-                location: "CCT Fitness Gym Center",
-                totalQty: 8,
-                availableQty: 6,
-                status: "Damaged",
-                lastChecked: "2026-09-27"
-            },
-            {
-                id: "SP-206",
-                name: "Kipsta Match FIFA Football",
-                sport: "Football",
-                location: "CCT Main Ground Shed",
-                totalQty: 10,
-                availableQty: 3,
-                status: "Replacement Needed",
-                lastChecked: "2026-09-30"
-            }
-        ];
-
-        const defaultProcurementRequests = [
-            {
-                id: "PR-501",
-                itemName: "Match Grade Football Balls (Pack of 5)",
-                sport: "Football",
-                qty: 2,
-                priority: "High",
-                requestedBy: "Coach Ray (CCT Football Team)",
-                status: "Reported",
-                reason: "Replacing worn out training balls before district league."
-            },
-            {
-                id: "PR-502",
-                itemName: "Table Tennis Net Sets & Butterfly Balls",
-                sport: "Table Tennis",
-                qty: 4,
-                priority: "Medium",
-                requestedBy: "Student Sports Secretary",
-                status: "Ordered",
-                reason: "Restocking damaged table tennis equipment in CCT common room."
-            }
-        ];
-
-        let reports = JSON.parse(localStorage.getItem('cct_reports')) || defaultReports;
-        let sportsInventory = JSON.parse(localStorage.getItem('cct_sports_inventory')) || defaultSportsInventory;
-        let procurementRequests = JSON.parse(localStorage.getItem('cct_procurement_requests')) || defaultProcurementRequests;
-
-        let activeTab = 'dashboard';
-        let sportsSubTab = 'inventory';
-        let currentView = 'table';
-        let activeReportId = null;
-
-        // Init on DOM Load
-        window.addEventListener('DOMContentLoaded', () => {
-            saveState();
-            renderAllViews();
-        });
-
-        function saveState() {
-            localStorage.setItem('cct_reports', JSON.stringify(reports));
-            localStorage.setItem('cct_sports_inventory', JSON.stringify(sportsInventory));
-            localStorage.setItem('cct_procurement_requests', JSON.stringify(procurementRequests));
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
+    <!-- Submit New Issue / Sports Request Modal -->
+    <div id="reportModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in zoom-in duration-200">
             
-            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-slate-800';
-            const icon = type === 'success' ? 'fa-circle-check' : 'fa-info-circle';
-
-            toast.className = `${bgColor} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2.5 pointer-events-auto toast-animate`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${escapeHTML(message)}</span>`;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('toast-exit');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function switchNavTab(tab) {
-            activeTab = tab;
-
-            const vDash = document.getElementById('viewDashboard');
-            const vGen = document.getElementById('viewGeneral');
-            const vSport = document.getElementById('viewSports');
-
-            const nDash = document.getElementById('navDashboard');
-            const nGen = document.getElementById('navGeneral');
-            const nSport = document.getElementById('navSports');
-
-            const mDash = document.getElementById('mobNavDashboard');
-            const mGen = document.getElementById('mobNavGeneral');
-            const mSport = document.getElementById('mobNavSports');
-
-            vDash.classList.add('hidden');
-            vGen.classList.add('hidden');
-            vSport.classList.add('hidden');
-
-            const unselectedClass = "px-3.5 py-1.5 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900";
-            const selectedClass = "px-3.5 py-1.5 rounded-lg transition duration-150 bg-white text-brand-700 shadow-xs font-bold";
-            const selectedSportsClass = "px-3.5 py-1.5 rounded-lg transition duration-150 bg-white text-sports-700 shadow-xs font-bold";
-
-            nDash.className = unselectedClass;
-            nGen.className = unselectedClass;
-            nSport.className = unselectedClass;
-
-            mDash.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 bg-slate-100";
-            mGen.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 bg-slate-100";
-            mSport.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 bg-slate-100";
-
-            if (tab === 'dashboard') {
-                vDash.classList.remove('hidden');
-                nDash.className = selectedClass;
-                mDash.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-brand-700 border border-slate-200";
-            } else if (tab === 'general') {
-                vGen.classList.remove('hidden');
-                nGen.className = selectedClass;
-                mGen.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-brand-700 border border-slate-200";
-            } else if (tab === 'sports') {
-                vSport.classList.remove('hidden');
-                nSport.className = selectedSportsClass;
-                mSport.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-sports-700 border border-slate-200";
-            }
-
-            renderAllViews();
-        }
-
-        function switchSportsSubTab(tab) {
-            sportsSubTab = tab;
-            const invContainer = document.getElementById('sportsInventoryContainer');
-            const reqContainer = document.getElementById('sportsRequestsContainer');
-            const tabInv = document.getElementById('sportsSubTabInventory');
-            const tabReq = document.getElementById('sportsSubTabRequests');
-
-            if (tab === 'inventory') {
-                invContainer.classList.remove('hidden');
-                reqContainer.classList.add('hidden');
-                tabInv.className = "px-3.5 py-1.5 text-xs font-bold rounded-md bg-white text-sports-700 shadow-xs";
-                tabReq.className = "px-3.5 py-1.5 text-xs font-bold rounded-md text-slate-600 hover:text-slate-900";
-            } else {
-                invContainer.classList.add('hidden');
-                reqContainer.classList.remove('hidden');
-                tabReq.className = "px-3.5 py-1.5 text-xs font-bold rounded-md bg-white text-sports-700 shadow-xs";
-                tabInv.className = "px-3.5 py-1.5 text-xs font-bold rounded-md text-slate-600 hover:text-slate-900";
-            }
-        }
-
-        function switchView(view) {
-            currentView = view;
-            const tableBtn = document.getElementById('viewTableBtn');
-            const gridBtn = document.getElementById('viewGridBtn');
-            const tableView = document.getElementById('tableView');
-            const gridView = document.getElementById('gridView');
-
-            if (view === 'table') {
-                tableView.classList.remove('hidden');
-                gridView.classList.add('hidden');
-                tableBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 bg-white shadow-xs";
-                gridBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800";
-            } else {
-                tableView.classList.add('hidden');
-                gridView.classList.remove('hidden');
-                gridBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 bg-white shadow-xs";
-                tableBtn.className = "px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800";
-            }
-        }
-
-        function renderAllViews() {
-            renderDashboard();
-            renderReports();
-            renderSportsInventory();
-            renderProcurementRequests();
-            populateMissingDropdown();
-        }
-
-        function renderDashboard() {
-            document.getElementById('dashTotalIssues').innerText = reports.length;
-            const pendingCount = reports.filter(r => r.status === 'Pending').length;
-            document.getElementById('dashPendingCount').innerText = `${pendingCount} pending review`;
-
-            const totalSportsQty = sportsInventory.reduce((acc, curr) => acc + curr.totalQty, 0);
-            const availSportsQty = sportsInventory.reduce((acc, curr) => acc + curr.availableQty, 0);
-            document.getElementById('dashSportsTotal').innerText = totalSportsQty;
-            document.getElementById('dashSportsAvailCount').innerText = `${availSportsQty} Available units`;
-
-            const missingCount = sportsInventory.filter(i => i.status === 'Missing' || i.status === 'Damaged' || i.status === 'Maintenance' || i.status === 'Replacement Needed').length;
-            document.getElementById('dashSportsMissing').innerText = missingCount;
-
-            document.getElementById('dashSportsProcurement').innerText = procurementRequests.length;
-            const procPending = procurementRequests.filter(p => p.status === 'Reported' || p.status === 'Under Review').length;
-            document.getElementById('dashProcurementPending').innerText = `${procPending} Pending Review`;
-
-            // Recent Campus Reports List
-            const dashRecentContainer = document.getElementById('dashRecentIssues');
-            dashRecentContainer.innerHTML = reports.slice(0, 4).map(report => `
-                <div class="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
-                    <div class="space-y-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-mono text-[11px] font-bold text-slate-400">${report.id}</span>
-                            <span class="text-xs font-bold text-slate-800 truncate max-w-xs sm:max-w-md">${escapeHTML(report.title)}</span>
-                        </div>
-                        <div class="text-[11px] text-slate-400 flex items-center space-x-3">
-                            <span><i class="fa-solid fa-location-dot mr-1"></i>${escapeHTML(report.location)}</span>
-                            <span>• ${report.date}</span>
-                        </div>
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-paper-plane"></i>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        ${getStatusBadge(report.status)}
-                        <button onclick="openDetailModal('${report.id}')" class="text-xs text-brand-600 hover:text-brand-800 p-1">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Submit Public Report / Request</h2>
+                </div>
+                <button id="closeReportModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form id="reportForm" class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+                
+                <!-- Category Select -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Category *</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center space-x-2 p-3 border border-slate-300 dark:border-slate-600 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-50 dark:has-[:checked]:bg-sky-900/20">
+                            <input type="radio" name="category" value="Sports Inventory" class="text-sky-600 focus:ring-sky-500" checked id="radioSports">
+                            <div>
+                                <div class="text-sm font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-volleyball mr-1 text-sky-500"></i> Sports Equipment</div>
+                                <div class="text-xs text-slate-500">Missing, damaged gear or requisitions</div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center space-x-2 p-3 border border-slate-300 dark:border-slate-600 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-50 dark:has-[:checked]:bg-sky-900/20">
+                            <input type="radio" name="category" value="General Maintenance" class="text-sky-600 focus:ring-sky-500" id="radioGeneral">
+                            <div>
+                                <div class="text-sm font-semibold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-wrench mr-1 text-amber-500"></i> Campus Maintenance</div>
+                                <div class="text-xs text-slate-500">Hostel, IT, Plumbing, Infrastructure</div>
+                            </div>
+                        </label>
                     </div>
                 </div>
-            `).join('');
 
-            // Progress Bars for Sports Availability
-            const healthList = document.getElementById('sportsHealthList');
-            healthList.innerHTML = sportsInventory.slice(0, 5).map(item => {
-                const percentage = Math.round((item.availableQty / item.totalQty) * 100);
-                let barColor = 'bg-emerald-500';
-                if (percentage < 30) barColor = 'bg-rose-500';
-                else if (percentage < 70) barColor = 'bg-amber-500';
-
-                return `
-                    <div class="space-y-1">
-                        <div class="flex justify-between font-medium">
-                            <span class="text-slate-700 font-semibold">${escapeHTML(item.name)}</span>
-                            <span class="text-slate-500 font-mono">${item.availableQty}/${item.totalQty} Available (${percentage}%)</span>
-                        </div>
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                            <div class="${barColor} h-full rounded-full" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function getFilteredReports() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const statusVal = document.getElementById('filterStatus').value;
-            const categoryVal = document.getElementById('filterCategory').value;
-            const priorityVal = document.getElementById('filterPriority').value;
-
-            return reports.filter(item => {
-                const matchesSearch = item.title.toLowerCase().includes(searchVal) ||
-                                      item.description.toLowerCase().includes(searchVal) ||
-                                      item.reporter.toLowerCase().includes(searchVal) ||
-                                      item.id.toLowerCase().includes(searchVal);
-
-                const matchesStatus = statusVal === 'ALL' || item.status === statusVal;
-                const matchesCategory = categoryVal === 'ALL' || item.category === categoryVal;
-                const matchesPriority = priorityVal === 'ALL' || item.priority === priorityVal;
-
-                return matchesSearch && matchesStatus && matchesCategory && matchesPriority;
-            });
-        }
-
-        function applyFilters() {
-            renderReports();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterStatus').value = 'ALL';
-            document.getElementById('filterCategory').value = 'ALL';
-            document.getElementById('filterPriority').value = 'ALL';
-            renderReports();
-        }
-
-        function renderReports() {
-            const filtered = getFilteredReports();
-            const emptyState = document.getElementById('emptyState');
-            const tableView = document.getElementById('tableView');
-            const gridView = document.getElementById('gridView');
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                tableView.classList.add('hidden');
-                gridView.classList.add('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-                if (currentView === 'table') tableView.classList.remove('hidden');
-                if (currentView === 'grid') gridView.classList.remove('hidden');
-            }
-
-            // Table View Output
-            const tbody = document.getElementById('reportsTableBody');
-            tbody.innerHTML = filtered.map(report => `
-                <tr class="hover:bg-slate-50 transition duration-150">
-                    <td class="py-3.5 px-4 font-mono text-xs font-bold text-slate-600">${report.id}</td>
-                    <td class="py-3.5 px-4 max-w-xs">
-                        <div class="font-semibold text-slate-800 truncate">${escapeHTML(report.title)}</div>
-                        <div class="text-xs text-slate-400 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHTML(report.location)}</div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs font-medium text-slate-600">${escapeHTML(report.category)}</td>
-                    <td class="py-3.5 px-4">
-                        <div class="text-xs font-medium text-slate-700">${escapeHTML(report.reporter)}</div>
-                        <div class="text-[10px] text-slate-400">${escapeHTML(report.role)}</div>
-                    </td>
-                    <td class="py-3.5 px-4">${getPriorityBadge(report.priority)}</td>
-                    <td class="py-3.5 px-4">${getStatusBadge(report.status)}</td>
-                    <td class="py-3.5 px-4 text-right">
-                        <button onclick="openDetailModal('${report.id}')" class="text-xs font-medium text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-md transition">
-                            Details
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-
-            // Grid View Output
-            const gridContainer = document.getElementById('gridView');
-            gridContainer.innerHTML = filtered.map(report => `
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between space-y-4 hover:shadow-md transition">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="font-mono text-xs font-bold text-slate-400">${report.id}</span>
-                            ${getStatusBadge(report.status)}
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2">${escapeHTML(report.title)}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-2">${escapeHTML(report.description)}</p>
+                <!-- Issue / Request Type -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Report / Request Type *</label>
+                        <select id="issueType" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                            <!-- Populated dynamically based on category choice -->
+                        </select>
                     </div>
 
-                    <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
-                        <div class="flex justify-between text-slate-600">
-                            <span><i class="fa-solid fa-tag text-slate-400 mr-1"></i>${escapeHTML(report.category)}</span>
-                            <span>${getPriorityBadge(report.priority)}</span>
-                        </div>
-                        <div class="flex justify-between text-slate-400">
-                            <span><i class="fa-solid fa-user text-slate-400 mr-1"></i>${escapeHTML(report.reporter)}</span>
-                            <span>${report.date}</span>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Title / Item Name *</label>
+                        <input type="text" id="reportTitle" required placeholder="e.g., Damaged Basketball Hoop / AC repair" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                    </div>
+                </div>
+
+                <!-- Quantity field (Conditional for Sports) & Location -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div id="quantityContainer">
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Quantity *</label>
+                        <input type="number" id="itemQuantity" min="1" value="1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
                     </div>
 
-                    <button onclick="openDetailModal('${report.id}')" class="w-full text-center text-xs font-semibold text-brand-600 bg-brand-50 hover:bg-brand-100 py-2 rounded-lg transition">
-                        View Details
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Location / Venue *</label>
+                        <input type="text" id="locationVenue" required placeholder="e.g., Main Ground, Room 304, Indoor Gym, Hostel B" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                    </div>
+                </div>
+
+                <!-- Reporter Name, Role & Priority -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Your Name *</label>
+                        <input type="text" id="reporterName" required placeholder="Full Name" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Role *</label>
+                        <select id="reporterRole" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                            <option value="Student">Student</option>
+                            <option value="Sports Captain">Sports Captain</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Priority Level *</label>
+                        <select id="priorityLevel" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Description & Issue Details *</label>
+                    <textarea id="description" rows="3" required placeholder="Describe the damaged condition, missing details or requirement..." class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500"></textarea>
+                </div>
+
+                <!-- Image Attachment (URL or Base64 File) -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Attachment Image (Optional)</label>
+                    <input type="file" id="imageFileInput" accept="image/*" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 dark:file:bg-slate-700 dark:file:text-slate-300">
+                    <input type="hidden" id="imageBase64">
+                    <div id="imagePreview" class="mt-2 hidden">
+                        <img src="" id="previewImg" class="h-24 rounded-lg border border-slate-300 object-cover">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="submitReportBtn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Publish to Live Cloud Database</span>
                     </button>
                 </div>
-            `).join('');
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Detail & Admin Status Action Modal -->
+    <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <span id="detailCategoryBadge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300">Sports Equipment</span>
+                    <span id="detailPriorityBadge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300">Urgent</span>
+                </div>
+                <button id="closeDetailModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body Details -->
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+                <div>
+                    <h3 id="detailTitle" class="text-xl font-bold text-slate-900 dark:text-white">Equipment Name</h3>
+                    <p id="detailMeta" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Reported by Student on Oct 1, 2026</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                    <div>
+                        <div class="text-slate-400">Issue / Request Type</div>
+                        <div id="detailIssueType" class="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">Damaged Item</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400">Location / Venue</div>
+                        <div id="detailLocation" class="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">Main Sports Ground</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400">Quantity</div>
+                        <div id="detailQuantity" class="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">1</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-semibold uppercase text-slate-500 mb-1">Description</h4>
+                    <p id="detailDescription" class="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 whitespace-pre-line"></p>
+                </div>
+
+                <div id="detailImageWrapper" class="hidden">
+                    <h4 class="text-xs font-semibold uppercase text-slate-500 mb-1">Attached Media</h4>
+                    <img id="detailImage" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 dark:border-slate-700" src="">
+                </div>
+
+                <!-- Live Status Update Controls -->
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-2">Update Public Resolution Status</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <select id="updateStatusSelect" class="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500">
+                            <option value="Pending">Pending</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved / Replaced">Resolved / Replaced</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                        <button id="saveStatusBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Live Update</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Firebase JS SDK Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment Variables Injection
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cct-fix-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo" };
+
+        let db, auth, currentUser = null;
+        let reportsData = [];
+        let currentTab = 'ALL';
+        let currentViewMode = 'grid';
+        let selectedReportId = null;
+
+        // Initialize Firebase
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            initAuthAndSync();
+        } catch (err) {
+            console.error("Firebase Initialization fallback to local mode:", err);
+            updateSyncStatus(false);
+            loadLocalFallback();
         }
 
-        function renderSportsInventory() {
-            const searchVal = document.getElementById('sportsSearchInput').value.toLowerCase();
-            const sportVal = document.getElementById('sportsFilterSport').value;
-            const statusVal = document.getElementById('sportsFilterStatus').value;
+        // Rule 3: Auth Before Firestore Queries
+        async function initAuthAndSync() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const userCred = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = userCred.user;
+                } else {
+                    const userCred = await signInAnonymously(auth);
+                    currentUser = userCred.user;
+                }
+                updateSyncStatus(true);
+                startPublicRealtimeListener();
+            } catch (error) {
+                console.warn("Auth error, using local fallback state", error);
+                updateSyncStatus(false);
+                loadLocalFallback();
+            }
+        }
 
-            const filtered = sportsInventory.filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(searchVal) ||
-                                      item.id.toLowerCase().includes(searchVal) ||
-                                      item.location.toLowerCase().includes(searchVal);
-                const matchesSport = sportVal === 'ALL' || item.sport === sportVal;
-                const matchesStatus = statusVal === 'ALL' || item.status === statusVal;
+        // Rule 1: Strict Paths -> /artifacts/{appId}/public/data/reports
+        function getPublicReportsCollection() {
+            return collection(db, 'artifacts', appId, 'public', 'data', 'reports');
+        }
 
-                return matchesSearch && matchesSport && matchesStatus;
+        // Live Real-Time Public Synchronization (RULE 2: Simple Collection Query)
+        function startPublicRealtimeListener() {
+            if (!currentUser || !db) return;
+
+            const publicCol = getPublicReportsCollection();
+
+            onSnapshot(publicCol, (snapshot) => {
+                const liveReports = [];
+                snapshot.forEach((docSnap) => {
+                    liveReports.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Memory side sorting by date descending
+                liveReports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // If empty DB, populate with initial default campus seed data
+                if (liveReports.length === 0) {
+                    seedDefaultReports();
+                } else {
+                    reportsData = liveReports;
+                    renderDashboard();
+                }
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+                showToast("Cloud sync fallback enabled", "info");
             });
-
-            const tbody = document.getElementById('sportsInventoryTableBody');
-            tbody.innerHTML = filtered.map(item => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="py-3.5 px-4">
-                        <div class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHTML(item.name)}</div>
-                        <div class="font-mono text-[10px] text-slate-400">${item.id}</div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">
-                        <i class="fa-solid fa-trophy mr-1 text-sports-500"></i>${escapeHTML(item.sport)}
-                    </td>
-                    <td class="py-3.5 px-4 text-xs text-slate-600">
-                        <i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>${escapeHTML(item.location)}
-                    </td>
-                    <td class="py-3.5 px-4 text-xs font-medium">
-                        <span class="text-slate-800 font-bold">${item.availableQty}</span> / <span class="text-slate-500">${item.totalQty} Units</span>
-                    </td>
-                    <td class="py-3.5 px-4">${getSportsConditionBadge(item.status)}</td>
-                    <td class="py-3.5 px-4 text-xs text-slate-400">${item.lastChecked}</td>
-                    <td class="py-3.5 px-4 text-right space-x-1">
-                        ${item.status === 'Missing' || item.status === 'Damaged' || item.status === 'Maintenance' || item.status === 'Replacement Needed' ? 
-                            `<button onclick="resolveSportsStatus('${item.id}')" class="text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded transition">Restock / Mark Fixed</button>` :
-                            `<button onclick="quickFlagMissing('${item.id}')" class="text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded transition">Report Gear Issue</button>`
-                        }
-                    </td>
-                </tr>
-            `).join('');
         }
 
-        function renderProcurementRequests() {
-            const tbody = document.getElementById('sportsRequestsTableBody');
-            tbody.innerHTML = procurementRequests.map(req => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="py-3.5 px-4 font-mono text-xs font-bold text-slate-600">${req.id}</td>
-                    <td class="py-3.5 px-4 max-w-xs">
-                        <div class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHTML(req.itemName)}</div>
-                        <div class="text-xs text-slate-400 truncate">${escapeHTML(req.reason)}</div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs">
-                        <div class="font-bold text-slate-700">${req.qty} Units</div>
-                        <div>${getPriorityBadge(req.priority)}</div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs text-slate-600 font-medium">${escapeHTML(req.requestedBy)}</td>
-                    <td class="py-3.5 px-4">${getProcurementPipelineBadge(req.status)}</td>
-                    <td class="py-3.5 px-4 text-right space-x-1">
-                        ${req.status === 'Reported' || req.status === 'Under Review' ? `
-                            <button onclick="updateProcurementStatus('${req.id}', 'Ordered')" class="text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded">Mark Ordered</button>
-                        ` : req.status === 'Ordered' ? `
-                            <button onclick="updateProcurementStatus('${req.id}', 'Replaced/Restored')" class="text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded">Mark Replaced/Restored</button>
-                        ` : `<span class="text-xs text-slate-400 italic">Completed</span>`}
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function populateMissingDropdown() {
-            const select = document.getElementById('missingEquipmentSelect');
-            select.innerHTML = `<option value="">Choose item from inventory...</option>` + 
-                sportsInventory.map(i => `<option value="${i.id}">${i.name} (${i.sport}) - Loc: ${i.location}</option>`).join('');
-        }
-
-        function resolveSportsStatus(itemId) {
-            const item = sportsInventory.find(i => i.id === itemId);
-            if (item) {
-                item.status = 'Available';
-                item.availableQty = item.totalQty;
-                item.lastChecked = new Date().toISOString().split('T')[0];
-                saveState();
-                renderAllViews();
-                showToast(`Restocked ${item.name} status to Available!`);
-            }
-        }
-
-        function quickFlagMissing(itemId) {
-            openMissingItemModal();
-            document.getElementById('missingEquipmentSelect').value = itemId;
-        }
-
-        function updateProcurementStatus(reqId, newStatus) {
-            const req = procurementRequests.find(r => r.id === reqId);
-            if (req) {
-                req.status = newStatus;
-                saveState();
-                renderAllViews();
-                showToast(`Procurement status updated to ${newStatus}`);
-            }
-        }
-
-        function openDetailModal(id) {
-            const report = reports.find(r => r.id === id);
-            if (!report) return;
-
-            activeReportId = id;
-            document.getElementById('detailId').innerText = report.id;
-            document.getElementById('detailTitle').innerText = report.title;
-            document.getElementById('detailBadgeCategory').innerText = report.category;
-            document.getElementById('detailReporter').innerText = report.reporter;
-            document.getElementById('detailRole').innerText = report.role;
-            document.getElementById('detailLocation').innerText = report.location;
-            document.getElementById('detailDate').innerText = report.date;
-            document.getElementById('detailDescription').innerText = report.description;
-            document.getElementById('detailPriority').innerHTML = getPriorityBadge(report.priority);
-            document.getElementById('detailStatus').innerHTML = getStatusBadge(report.status);
-            document.getElementById('updateStatusSelect').value = report.status;
-
-            const imgContainer = document.getElementById('detailAttachmentContainer');
-            const imgTag = document.getElementById('detailImage');
-            if (report.image) {
-                imgTag.src = report.image;
-                imgContainer.classList.remove('hidden');
-            } else {
-                imgContainer.classList.add('hidden');
-            }
-
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-            activeReportId = null;
-        }
-
-        function updateStatus(newStatus) {
-            if (!activeReportId) return;
-
-            const report = reports.find(r => r.id === activeReportId);
-            if (report) {
-                report.status = newStatus;
-                saveState();
-                renderAllViews();
-                document.getElementById('detailStatus').innerHTML = getStatusBadge(newStatus);
-                showToast(`Report status updated to ${newStatus}`);
-            }
-        }
-
-        function openNewReportModal() {
-            document.getElementById('newReportModal').classList.remove('hidden');
-        }
-
-        function closeNewReportModal() {
-            document.getElementById('newReportModal').classList.add('hidden');
-            document.getElementById('issueForm').reset();
-        }
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const title = document.getElementById('formTitle').value;
-            const category = document.getElementById('formCategory').value;
-            const priority = document.getElementById('formPriority').value;
-            const location = document.getElementById('formLocation').value;
-            const reporter = document.getElementById('formReporter').value;
-            const role = document.getElementById('formRole').value;
-            const description = document.getElementById('formDescription').value;
-            const fileInput = document.getElementById('formImage');
-
-            const newId = `ISS-${1000 + reports.length + 1}`;
-            const today = new Date().toISOString().split('T')[0];
-
-            const saveAndRender = (imageData) => {
-                const newReport = {
-                    id: newId,
-                    title,
-                    category,
-                    reporter,
-                    role,
-                    location,
-                    priority,
+        // Seed initial public demo items if collection is completely fresh
+        async function seedDefaultReports() {
+            const initialSeed = [
+                {
+                    id: 'rep-1',
+                    category: 'Sports Inventory',
+                    issueType: 'Damaged Item',
+                    title: 'Badminton Racket Frame Cracked',
+                    quantity: 2,
+                    location: 'Indoor Badminton Court 2',
+                    reporterName: 'Alex Mercer',
+                    reporterRole: 'Sports Captain',
+                    priority: 'High',
+                    description: 'Two badminton rackets have split graphite frames near the top rim. Need replacement before tomorrow\'s match.',
                     status: 'Pending',
-                    date: today,
-                    description,
-                    image: imageData
-                };
+                    createdAt: new Date(Date.now() - 3600000 * 3).toISOString()
+                },
+                {
+                    id: 'rep-2',
+                    category: 'Sports Inventory',
+                    issueType: 'Missing Item',
+                    title: 'Missing Table Tennis Balls Set',
+                    quantity: 10,
+                    location: 'Student Activity Center',
+                    reporterName: 'Siddharth Rao',
+                    reporterRole: 'Student',
+                    priority: 'Medium',
+                    description: 'The TT ball box in Cabinet B is empty. Requests for 3-star tournament quality TT balls.',
+                    status: 'In Progress',
+                    createdAt: new Date(Date.now() - 3600000 * 12).toISOString()
+                },
+                {
+                    id: 'rep-3',
+                    category: 'General Maintenance',
+                    issueType: 'IT/Network',
+                    title: 'Library Wi-Fi Router Intermittent',
+                    quantity: 1,
+                    location: 'Central Library 2nd Floor',
+                    reporterName: 'Dr. Priya Sharma',
+                    reporterRole: 'Faculty',
+                    priority: 'Urgent',
+                    description: 'Wi-Fi keeps dropping connection every 15 minutes affecting student study desks.',
+                    status: 'Under Review',
+                    createdAt: new Date(Date.now() - 3600000 * 24).toISOString()
+                }
+            ];
 
-                reports.unshift(newReport);
-                saveState();
-                renderAllViews();
-                closeNewReportModal();
-                showToast("CCT issue report submitted successfully!");
-            };
+            for (const item of initialSeed) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reports', item.id);
+                    await setDoc(docRef, item);
+                } catch (e) {
+                    console.error("Error seeding initial data:", e);
+                }
+            }
+        }
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    saveAndRender(event.target.result);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+        // Local Storage Fallback
+        function loadLocalFallback() {
+            const saved = localStorage.getItem('cct_fix_reports');
+            if (saved) {
+                reportsData = JSON.parse(saved);
             } else {
-                saveAndRender(null);
+                reportsData = [];
             }
+            renderDashboard();
         }
 
-        function openMissingItemModal() {
-            populateMissingDropdown();
-            document.getElementById('missingItemModal').classList.remove('hidden');
+        function saveLocalFallback() {
+            localStorage.setItem('cct_fix_reports', JSON.stringify(reportsData));
         }
 
-        function closeMissingItemModal() {
-            document.getElementById('missingItemModal').classList.add('hidden');
-            document.getElementById('missingItemForm').reset();
-        }
+        // UI Render Function
+        window.renderDashboard = function() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const statusVal = document.getElementById('statusFilter').value;
+            const priorityVal = document.getElementById('priorityFilter').value;
 
-        function handleMissingItemSubmit(e) {
-            e.preventDefault();
-            const itemId = document.getElementById('missingEquipmentSelect').value;
-            const condition = document.getElementById('missingType').value;
-            const qty = parseInt(document.getElementById('missingQty').value);
-            const location = document.getElementById('missingLocation').value;
-            const reporter = document.getElementById('missingReporter').value;
-            const urgency = document.getElementById('missingUrgency').value;
-            const action = document.getElementById('missingAction').value;
-            const notes = document.getElementById('missingNotes').value;
+            // Filter data in JS memory
+            const filtered = reportsData.filter(item => {
+                // Tab filter
+                if (currentTab === 'Sports' && item.category !== 'Sports Inventory') return false;
+                if (currentTab === 'General' && item.category !== 'General Maintenance') return false;
 
-            const sportsItem = sportsInventory.find(i => i.id === itemId);
-            if (sportsItem) {
-                sportsItem.status = condition;
-                sportsItem.availableQty = Math.max(0, sportsItem.availableQty - qty);
-                sportsItem.lastChecked = new Date().toISOString().split('T')[0];
-            }
+                // Status filter
+                if (statusVal !== 'ALL' && item.status !== statusVal) return false;
 
-            const newIssueId = `ISS-${1000 + reports.length + 1}`;
-            const today = new Date().toISOString().split('T')[0];
+                // Priority filter
+                if (priorityVal !== 'ALL' && item.priority !== priorityVal) return false;
 
-            reports.unshift({
-                id: newIssueId,
-                title: `[SPORTS GEAR ALERT] ${condition}: ${sportsItem ? sportsItem.name : 'Equipment'} (${qty} units)`,
-                category: "Sports Facilities",
-                reporter: reporter,
-                role: "Sports Coach",
-                location: location,
-                priority: urgency,
-                status: "Pending",
-                date: today,
-                description: `FLAGGED ${condition.toUpperCase()} SPORTS MATERIAL: ${notes}\nRecommended Action: ${action}`,
-                image: null
+                // Search filter
+                if (searchVal) {
+                    const matchTitle = item.title?.toLowerCase().includes(searchVal);
+                    const matchLocation = item.location?.toLowerCase().includes(searchVal);
+                    const matchReporter = item.reporterName?.toLowerCase().includes(searchVal);
+                    if (!matchTitle && !matchLocation && !matchReporter) return false;
+                }
+
+                return true;
             });
 
-            saveState();
-            renderAllViews();
-            closeMissingItemModal();
-            showToast(`Flagged ${sportsItem ? sportsItem.name : 'gear'} as ${condition}!`);
-        }
+            // Update Counts
+            document.getElementById('badgeCountAll').textContent = reportsData.length;
+            document.getElementById('badgeCountSports').textContent = reportsData.filter(r => r.category === 'Sports Inventory').length;
+            document.getElementById('badgeCountGeneral').textContent = reportsData.filter(r => r.category === 'General Maintenance').length;
 
-        function openProcurementModal() {
-            document.getElementById('procurementModal').classList.remove('hidden');
-        }
+            // Stats update
+            document.getElementById('statTotal').textContent = reportsData.length;
+            document.getElementById('statPending').textContent = reportsData.filter(r => r.status === 'Pending' || r.status === 'Under Review').length;
+            document.getElementById('statInProgress').textContent = reportsData.filter(r => r.status === 'In Progress').length;
+            document.getElementById('statResolved').textContent = reportsData.filter(r => r.status === 'Resolved / Replaced').length;
+            document.getElementById('statSportsMissing').textContent = reportsData.filter(r => r.category === 'Sports Inventory' && (r.issueType === 'Missing Item' || r.issueType === 'Damaged Item')).length;
 
-        function closeProcurementModal() {
-            document.getElementById('procurementModal').classList.add('hidden');
-            document.getElementById('procurementForm').reset();
-        }
+            // Render view modes
+            const gridContainer = document.getElementById('reportsGrid');
+            const tableWrapper = document.getElementById('reportsTableWrapper');
+            const tableBody = document.getElementById('reportsTableBody');
+            const emptyState = document.getElementById('emptyState');
 
-        function handleProcurementSubmit(e) {
-            e.preventDefault();
-            const itemName = document.getElementById('reqItemName').value;
-            const sportCategory = document.getElementById('reqSportCategory').value;
-            const qty = parseInt(document.getElementById('reqQuantity').value);
-            const priority = document.getElementById('reqPriority').value;
-            const requestedBy = document.getElementById('reqRequestedBy').value;
-            const reason = document.getElementById('reqReason').value;
+            if (filtered.length === 0) {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
 
-            const newReq = {
-                id: `PR-${500 + procurementRequests.length + 1}`,
-                itemName,
-                sport: sportCategory,
-                qty,
-                priority,
-                requestedBy,
-                status: "Reported",
-                reason
-            };
+            emptyState.classList.add('hidden');
 
-            procurementRequests.unshift(newReq);
-            saveState();
-            renderAllViews();
-            closeProcurementModal();
-            showToast("Sports equipment request submitted for CCT!");
-            switchNavTab('sports');
-            switchSportsSubTab('requests');
+            if (currentViewMode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                tableWrapper.classList.add('hidden');
+                gridContainer.innerHTML = filtered.map(item => createCardHTML(item)).join('');
+            } else {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+                tableBody.innerHTML = filtered.map(item => createRowHTML(item)).join('');
+            }
+        };
+
+        function getPriorityBadge(priority) {
+            switch(priority) {
+                case 'Urgent': return '<span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">Urgent</span>';
+                case 'High': return '<span class="px-2 py-0.5 text-xs font-semibold rounded-md bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300">High</span>';
+                case 'Medium': return '<span class="px-2 py-0.5 text-xs font-semibold rounded-md bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Medium</span>';
+                default: return '<span class="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">Low</span>';
+            }
         }
 
         function getStatusBadge(status) {
             switch(status) {
-                case 'Pending':
-                    return `<span class="badge bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-solid fa-circle text-[6px] mr-1 text-amber-500"></i>Pending</span>`;
-                case 'In Progress':
-                    return `<span class="badge bg-indigo-50 text-indigo-700 border border-indigo-200"><i class="fa-solid fa-spinner fa-spin text-[8px] mr-1 text-indigo-500"></i>In Progress</span>`;
-                case 'Resolved':
-                    return `<span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[8px] mr-1 text-emerald-500"></i>Resolved</span>`;
-                case 'Rejected':
-                    return `<span class="badge bg-rose-50 text-rose-700 border border-rose-200">Rejected</span>`;
-                default:
-                    return `<span class="badge bg-slate-100 text-slate-600">${status}</span>`;
+                case 'Resolved / Replaced': return '<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 flex items-center gap-1 w-max"><i class="fa-solid fa-circle-check"></i> Resolved</span>';
+                case 'In Progress': return '<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 flex items-center gap-1 w-max"><i class="fa-solid fa-spinner animate-spin"></i> In Progress</span>';
+                case 'Under Review': return '<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 flex items-center gap-1 w-max"><i class="fa-solid fa-magnifying-glass"></i> Under Review</span>';
+                case 'Rejected': return '<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-300 flex items-center gap-1 w-max"><i class="fa-solid fa-xmark"></i> Rejected</span>';
+                default: return '<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 flex items-center gap-1 w-max"><i class="fa-solid fa-clock"></i> Pending</span>';
             }
         }
 
-        function getPriorityBadge(priority) {
-            switch(priority) {
-                case 'Urgent':
-                    return `<span class="badge bg-rose-50 text-rose-700 border border-rose-200">Urgent</span>`;
-                case 'High':
-                    return `<span class="badge bg-orange-50 text-orange-700 border border-orange-200">High</span>`;
-                case 'Medium':
-                    return `<span class="badge bg-blue-50 text-blue-700 border border-blue-200">Medium</span>`;
-                case 'Low':
-                    return `<span class="badge bg-slate-100 text-slate-600 border border-slate-200">Low</span>`;
-                default:
-                    return `<span class="badge bg-slate-100 text-slate-600">${priority}</span>`;
+        function createCardHTML(item) {
+            const isSports = item.category === 'Sports Inventory';
+            const catIcon = isSports ? 'fa-volleyball text-sky-500' : 'fa-wrench text-amber-500';
+            const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently';
+
+            return `
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <!-- Header -->
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <div class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                <i class="fa-solid ${catIcon}"></i>
+                                <span>${item.category}</span>
+                            </div>
+                            ${getPriorityBadge(item.priority)}
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="font-bold text-slate-900 dark:text-white text-base leading-snug line-clamp-1 mb-1">${escapeHTML(item.title)}</h3>
+                        
+                        <!-- Meta Details -->
+                        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3">
+                            <span class="bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">${item.issueType}</span>
+                            ${isSports && item.quantity ? `<span class="bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800">Qty: ${item.quantity}</span>` : ''}
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-location-dot text-slate-400"></i> ${escapeHTML(item.location)}</span>
+                        </div>
+
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">${escapeHTML(item.description)}</p>
+                    </div>
+
+                    <!-- Footer Details -->
+                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                        <div>
+                            ${getStatusBadge(item.status)}
+                            <div class="text-[10px] text-slate-400 mt-1">By ${escapeHTML(item.reporterName)} (${item.reporterRole}) • ${dateStr}</div>
+                        </div>
+                        <button onclick="window.openDetailModal('${item.id}')" class="px-3 py-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-700 rounded-lg transition">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createRowHTML(item) {
+            const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '-';
+            return `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                    <td class="px-4 py-3">
+                        <div class="font-semibold text-slate-900 dark:text-white">${escapeHTML(item.title)}</div>
+                        <div class="text-xs text-slate-400">${item.category} • ${item.issueType}</div>
+                    </td>
+                    <td class="px-4 py-3 text-xs font-medium">${escapeHTML(item.location)}</td>
+                    <td class="px-4 py-3 text-xs">${escapeHTML(item.reporterName)} <span class="text-slate-400">(${item.reporterRole})</span></td>
+                    <td class="px-4 py-3">${getPriorityBadge(item.priority)}</td>
+                    <td class="px-4 py-3">${getStatusBadge(item.status)}</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${dateStr}</td>
+                    <td class="px-4 py-3 text-right">
+                        <button onclick="window.openDetailModal('${item.id}')" class="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline">View</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Form & Modal Controls
+        const reportModal = document.getElementById('reportModal');
+        const detailModal = document.getElementById('detailModal');
+        const issueTypeSelect = document.getElementById('issueType');
+        const radioSports = document.getElementById('radioSports');
+        const radioGeneral = document.getElementById('radioGeneral');
+        const quantityContainer = document.getElementById('quantityContainer');
+
+        function updateIssueTypeOptions() {
+            if (radioSports.checked) {
+                quantityContainer.classList.remove('hidden');
+                issueTypeSelect.innerHTML = `
+                    <option value="Damaged Item">Damaged Item</option>
+                    <option value="Missing Item">Missing Item</option>
+                    <option value="New Requirement / Requisition">New Requirement / Requisition</option>
+                `;
+            } else {
+                quantityContainer.classList.add('hidden');
+                issueTypeSelect.innerHTML = `
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Cleanliness & Sanitation">Cleanliness & Sanitation</option>
+                    <option value="IT/Network">IT/Network</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Safety">Safety</option>
+                `;
             }
         }
 
-        function getSportsConditionBadge(status) {
-            switch(status) {
-                case 'Available':
-                    return `<span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span>`;
-                case 'Damaged':
-                    return `<span class="badge bg-amber-50 text-amber-700 border border-amber-200">Damaged</span>`;
-                case 'Missing':
-                    return `<span class="badge bg-rose-50 text-rose-700 border border-rose-200">Missing</span>`;
-                case 'Maintenance':
-                    return `<span class="badge bg-purple-50 text-purple-700 border border-purple-200">Maintenance</span>`;
-                case 'Replacement Needed':
-                    return `<span class="badge bg-orange-50 text-orange-700 border border-orange-200">Replacement Needed</span>`;
-                default:
-                    return `<span class="badge bg-slate-100 text-slate-600">${status}</span>`;
+        radioSports.addEventListener('change', updateIssueTypeOptions);
+        radioGeneral.addEventListener('change', updateIssueTypeOptions);
+        updateIssueTypeOptions();
+
+        document.getElementById('openReportModalBtn').addEventListener('click', () => {
+            reportModal.classList.remove('hidden');
+        });
+        document.getElementById('emptyNewBtn').addEventListener('click', () => {
+            reportModal.classList.remove('hidden');
+        });
+        document.getElementById('closeReportModalBtn').addEventListener('click', () => {
+            reportModal.classList.add('hidden');
+        });
+
+        document.getElementById('closeDetailModalBtn').addEventListener('click', () => {
+            detailModal.classList.add('hidden');
+        });
+
+        // Image Base64 Handler
+        document.getElementById('imageFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('imageBase64').value = evt.target.result;
+                    document.getElementById('previewImg').src = evt.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Submit New Report Action
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const category = radioSports.checked ? 'Sports Inventory' : 'General Maintenance';
+            const newReport = {
+                id: 'rep-' + Date.now(),
+                category: category,
+                issueType: document.getElementById('issueType').value,
+                title: document.getElementById('reportTitle').value.trim(),
+                quantity: category === 'Sports Inventory' ? parseInt(document.getElementById('itemQuantity').value) || 1 : 1,
+                location: document.getElementById('locationVenue').value.trim(),
+                reporterName: document.getElementById('reporterName').value.trim(),
+                reporterRole: document.getElementById('reporterRole').value,
+                priority: document.getElementById('priorityLevel').value,
+                description: document.getElementById('description').value.trim(),
+                imageUrl: document.getElementById('imageBase64').value || '',
+                status: 'Pending',
+                createdAt: new Date().toISOString()
+            };
+
+            const submitBtn = document.getElementById('submitReportBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Saving to Cloud...</span>`;
+
+            try {
+                if (currentUser && db) {
+                    // Save to Firestore strictly using public schema
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reports', newReport.id);
+                    await setDoc(docRef, newReport);
+                } else {
+                    reportsData.unshift(newReport);
+                    saveLocalFallback();
+                    renderDashboard();
+                }
+
+                showToast("Report submitted successfully! Visible to everyone in real time.", "success");
+                document.getElementById('reportForm').reset();
+                document.getElementById('imagePreview').classList.add('hidden');
+                document.getElementById('imageBase64').value = '';
+                reportModal.classList.add('hidden');
+            } catch (err) {
+                console.error("Error saving report:", err);
+                showToast("Failed to sync to cloud. Local fallback used.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> <span>Publish to Live Cloud Database</span>`;
+            }
+        });
+
+        // Detailed View & Status Update
+        window.openDetailModal = function(id) {
+            const item = reportsData.find(r => r.id === id);
+            if (!item) return;
+
+            selectedReportId = id;
+            document.getElementById('detailTitle').textContent = item.title;
+            document.getElementById('detailCategoryBadge').textContent = item.category;
+            document.getElementById('detailPriorityBadge').outerHTML = getPriorityBadge(item.priority);
+            document.getElementById('detailMeta').textContent = `Reported by ${item.reporterName} (${item.reporterRole}) • ${new Date(item.createdAt).toLocaleString()}`;
+            document.getElementById('detailIssueType').textContent = item.issueType;
+            document.getElementById('detailLocation').textContent = item.location;
+            document.getElementById('detailQuantity').textContent = item.quantity || '1';
+            document.getElementById('detailDescription').textContent = item.description;
+            document.getElementById('updateStatusSelect').value = item.status;
+
+            const imageWrapper = document.getElementById('detailImageWrapper');
+            if (item.imageUrl) {
+                imageWrapper.classList.remove('hidden');
+                document.getElementById('detailImage').src = item.imageUrl;
+            } else {
+                imageWrapper.classList.add('hidden');
+            }
+
+            detailModal.classList.remove('hidden');
+        };
+
+        // Update Report Status
+        document.getElementById('saveStatusBtn').addEventListener('click', async () => {
+            if (!selectedReportId) return;
+
+            const newStatus = document.getElementById('updateStatusSelect').value;
+            const saveBtn = document.getElementById('saveStatusBtn');
+            saveBtn.disabled = true;
+
+            try {
+                if (currentUser && db) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reports', selectedReportId);
+                    await updateDoc(docRef, { status: newStatus });
+                } else {
+                    const idx = reportsData.findIndex(r => r.id === selectedReportId);
+                    if (idx !== -1) {
+                        reportsData[idx].status = newStatus;
+                        saveLocalFallback();
+                        renderDashboard();
+                    }
+                }
+
+                showToast(`Status updated to "${newStatus}"!`, "success");
+                detailModal.classList.add('hidden');
+            } catch (err) {
+                console.error("Error updating status:", err);
+                showToast("Failed to update status in cloud.", "error");
+            } finally {
+                saveBtn.disabled = false;
+            }
+        });
+
+        // Tab Navigation
+        const tabs = [
+            { btn: document.getElementById('tabAll'), name: 'ALL' },
+            { btn: document.getElementById('tabSports'), name: 'Sports' },
+            { btn: document.getElementById('tabGeneral'), name: 'General' }
+        ];
+
+        tabs.forEach(tab => {
+            tab.btn.addEventListener('click', () => {
+                currentTab = tab.name;
+                tabs.forEach(t => {
+                    if (t.name === tab.name) {
+                        t.btn.classList.add('border-sky-600', 'text-sky-600', 'dark:text-sky-400', 'font-semibold');
+                        t.btn.classList.remove('border-transparent', 'text-slate-500');
+                    } else {
+                        t.btn.classList.remove('border-sky-600', 'text-sky-600', 'dark:text-sky-400', 'font-semibold');
+                        t.btn.classList.add('border-transparent', 'text-slate-500');
+                    }
+                });
+                renderDashboard();
+            });
+        });
+
+        // Grid / Table View Switching
+        document.getElementById('viewGridBtn').addEventListener('click', () => {
+            currentViewMode = 'grid';
+            document.getElementById('viewGridBtn').className = 'p-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm';
+            document.getElementById('viewTableBtn').className = 'p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-sm';
+            renderDashboard();
+        });
+
+        document.getElementById('viewTableBtn').addEventListener('click', () => {
+            currentViewMode = 'table';
+            document.getElementById('viewTableBtn').className = 'p-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-sm';
+            document.getElementById('viewGridBtn').className = 'p-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-sm';
+            renderDashboard();
+        });
+
+        // Search & Filters Input
+        document.getElementById('searchInput').addEventListener('input', renderDashboard);
+        document.getElementById('statusFilter').addEventListener('change', renderDashboard);
+        document.getElementById('priorityFilter').addEventListener('change', renderDashboard);
+
+        // Dark Mode Toggle
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Helper Functions
+        function updateSyncStatus(isLive) {
+            const text = document.getElementById('syncStatusText');
+            if (isLive) {
+                text.textContent = 'Live Cloud Syncing (Visible to Everyone)';
+            } else {
+                text.textContent = 'Offline Mode (Local Storage)';
             }
         }
 
-        function getProcurementPipelineBadge(status) {
-            switch(status) {
-                case 'Reported':
-                case 'Under Review':
-                    return `<span class="badge bg-amber-50 text-amber-700 border border-amber-200">Reported / Under Review</span>`;
-                case 'Ordered':
-                    return `<span class="badge bg-indigo-50 text-indigo-700 border border-indigo-200">Ordered</span>`;
-                case 'Replaced/Restored':
-                    return `<span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200">Replaced / Restored</span>`;
-                default:
-                    return `<span class="badge bg-slate-100 text-slate-600">${status}</span>`;
-            }
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-800';
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg text-sm flex items-center space-x-2 transition duration-300 pointer-events-auto`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
         function escapeHTML(str) {
-            return str ? str.replace(/[&<>'"]/g, 
-                tag => ({
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    "'": '&#39;',
-                    '"': '&quot;'
-                }[tag] || tag)
-            ) : '';
+            return (str || '').replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
         }
     </script>
 </body>
